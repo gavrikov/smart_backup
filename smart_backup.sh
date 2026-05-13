@@ -38,7 +38,7 @@ get_deleted_dirname() {
     local bkp_dir="$1"
     local base
     base=$(basename "$bkp_dir")
-    if [ "$base" == "/" ] || [ -z "$base" ]; then echo ".DELETED_"; else echo ".DELETED_$base"; fi
+    if [ "$base" == "/" ] || [ -z "$base" ]; then echo "DELETED_"; else echo "DELETED_$base"; fi
 }
 DEL_DIR_NAME=$(get_deleted_dirname "$DIR2")
 DEL_PATH="$DIR2/$DEL_DIR_NAME"
@@ -176,8 +176,6 @@ build_index() {
         current_size=$(stat -c %s "$file")
         f_dir=$(dirname "$file")
         f_dir_id=1
-
-
         
         if [ "$f_dir" != "$target_dir" ] && [ "$f_dir" != "$DEL_PATH" ]; then
             f_dir_id="${dir_ids[$type:$f_dir]}"
@@ -215,8 +213,7 @@ build_index() {
         else
             printf "\r[Индексация] Файлов: %d | %s | %d%% | Обработано          " "$files_processed" "$display_bytes" "$pct"
         fi
-    done < <(find "$target_dir" -path "$DEL_PATH" -prune -o -type f -not -name "$SRC_INDEX_NAME" -not -name "$BKP_INDEX_NAME" -print0)
-
+    done < <(find "$target_dir" -type f -not -name "$SRC_INDEX_NAME" -not -name "$BKP_INDEX_NAME" -print0)
 
     echo ""
     mv "$tmp_index" "$index_file"
