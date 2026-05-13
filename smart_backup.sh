@@ -105,13 +105,11 @@ build_index() {
     # Расчёт базового размера для прогресса
     local total_bytes=0
     if [ "$is_update" == "true" ] && [ -f "$index_file" ]; then
-        # Быстрое суммирование 5-й колонки (size) из существующего индекса
         total_bytes=$(awk -F'\t' '($1=="F" || $1=="TF") {sum+=$5} END {print sum+0}' "$index_file")
     else
-        # При полном пересчёте берём фактический размер директории
         total_bytes=$(du -sb "$target_dir" 2>/dev/null | cut -f1)
     fi
-    [ "$total_bytes" -eq 0 ] && total_bytes=1 # Защита от деления на 0
+    [ "$total_bytes" -eq 0 ] && total_bytes=1
 
     declare -A old_mtime old_hash old_size
     if [ "$is_update" == "true" ] && [ -f "$index_file" ]; then
@@ -255,7 +253,7 @@ sync_data() {
     done < "$src_idx"
 
     local trash_total_size=0
-    # Чтение бэкапа
+    # Чтение бэкапа (ВОССТАНОВЛЕНА СТРОКА bkp_hash_to_path)
     while IFS=$'\t' read -r type arg2 hash rel_path size dir_id; do
         hash=$(echo "$hash" | tr -d '\r')
         if [ "$type" == "F" ]; then
